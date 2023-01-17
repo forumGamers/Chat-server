@@ -1,0 +1,31 @@
+{
+  "name": "chat-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forumGamers/Chat-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/forumGamers/Chat-server/issues"
+  },
+  "homepage": "https://github.com/forumGamers/Chat-server#readme",
+  "dependencies": {
+    "@types/compression": "^1.7.2",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.15",
+    "@types/mongoose": "^5.11.97",
+    "dotenv": "^16.0.3",
+    "mongoose": "^5.13.15",
+    "ts-dotenv": "^0.9.0",
+    "ts-mongoose": "^0.0.24",
+    "ts-node": "^10.9.1"
+  }
+}
