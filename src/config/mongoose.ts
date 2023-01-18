@@ -9,8 +9,8 @@ export default abstract class MongooseService {
     this.connections();
   }
 
-  private connect(): void {
-    mongoose.connect("mongodb://127.0.0.1/Chat", {
+  private async connect(): Promise<void> {
+    await mongoose.connect("mongodb://127.0.0.1/Chat", {
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,

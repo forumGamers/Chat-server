@@ -25,7 +25,15 @@ export default class Chat extends MongooseService {
       return await chat.save();
     } catch (err) {
       console.log(err);
-      throw err;
+      return err;
+    }
+  }
+
+  public async getData(): Promise<any> {
+    try {
+      return await this.Chat.find();
+    } catch (err) {
+      return err;
     }
   }
 }
