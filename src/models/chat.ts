@@ -16,6 +16,7 @@ export default class Chat extends MongooseService {
     createdAt: Type.date({ default: new Date() }),
     image: Type.string(),
     RoomId: Type.number({ required: true }),
+    isRead: Type.boolean({ default: false }),
   });
 
   public pre(): void {
