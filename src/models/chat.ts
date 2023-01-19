@@ -1,10 +1,12 @@
 import { createSchema, Type, typedModel } from "ts-mongoose";
 import MongooseService from "../config/mongoose";
 import { ChatSchema } from "../interfaces/schema";
+import { encrypt } from "../helpers/crypto";
 
 export default class Chat extends MongooseService {
   constructor() {
     super();
+    this.pre();
   }
 
   public ChatSchema = createSchema({
@@ -15,6 +17,16 @@ export default class Chat extends MongooseService {
     image: Type.string(),
     RoomId: Type.number({ required: true }),
   });
+
+  public pre(): void {
+    this.ChatSchema.pre("save", function (next) {
+      if (!this.isModified("message")) {
+        return next();
+      }
+      this.set("message", encrypt(this.get("message")));
+      next();
+    });
+  }
 
   public Chat = typedModel("Chat", this.ChatSchema);
 
