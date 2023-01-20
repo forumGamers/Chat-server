@@ -2,6 +2,8 @@ import { createSchema, Type, typedModel } from "ts-mongoose";
 import MongooseService from "../config/mongoose";
 import { ChatSchema } from "../interfaces/schema";
 import { encrypt } from "../helpers/crypto";
+import Room from "./room";
+const roomSchema = new Room().RoomSchema;
 
 export default class Chat extends MongooseService {
   constructor() {
@@ -11,11 +13,10 @@ export default class Chat extends MongooseService {
 
   public ChatSchema = createSchema({
     SenderId: Type.number({ required: true }),
-    type: Type.string({ required: true }),
     message: Type.string(),
     createdAt: Type.date({ default: new Date() }),
     image: Type.string(),
-    RoomId: Type.number({ required: true }),
+    RoomId: Type.ref(Type.objectId()).to("Room", roomSchema),
     isRead: Type.boolean({ default: false }),
   });
 

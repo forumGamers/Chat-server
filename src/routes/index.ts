@@ -1,8 +1,9 @@
 import BaseRoutes from "./base";
+import ChatRouter from "./chat";
 
 class Router extends BaseRoutes {
   public routes(): void {
-    this.router.get("/");
+    this.router.use("/chat", ChatRouter);
   }
 }
 
