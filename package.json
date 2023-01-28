@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node build/bin/www.js",
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "nodemon build/bin/www.js"
   },
   "repository": {
     "type": "git",

@@ -11,14 +11,21 @@ export default class Chat extends MongooseService {
     this.pre();
   }
 
-  public ChatSchema = createSchema({
-    SenderId: Type.number({ required: true }),
-    message: Type.string(),
-    createdAt: Type.date({ default: new Date() }),
-    image: Type.string(),
-    RoomId: Type.ref(Type.objectId()).to("Room", roomSchema),
-    isRead: Type.boolean({ default: false }),
-  });
+  public ChatSchema = createSchema(
+    {
+      SenderId: Type.number({ required: true }),
+      message: Type.string(),
+      createdAt: Type.date({ default: new Date() }),
+      image: Type.string(),
+      RoomId: Type.ref(Type.objectId()).to("Room", roomSchema),
+      isRead: Type.boolean({ default: false }),
+    },
+    {
+      timestamps: true,
+      toJSON: { virtuals: true },
+      toObject: { virtuals: true },
+    }
+  );
 
   public pre(): void {
     this.ChatSchema.pre("save", function (next) {
