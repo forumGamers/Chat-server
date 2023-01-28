@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 import express, { Application } from "express";
 import cors from "cors";
-import compression from "compression";
+const compression = require("compression");
 import router from "./routes";
 import { errorHandler } from "./middlewares/errorHandler";
 
