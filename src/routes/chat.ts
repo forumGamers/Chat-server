@@ -3,7 +3,7 @@ import BaseRoutes from "./base";
 
 class ChatRouter extends BaseRoutes {
   routes(): void {
-    this.router.post("/", Controller.postChat);
+    this.router.post("/", Controller.postChat).get("/", Controller.renderChat);
   }
 }
 

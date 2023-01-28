@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 import express, { Application } from "express";
 import cors from "cors";
-const compression = require("compression");
+import compression from "compression";
 import router from "./routes";
 import { errorHandler } from "./middlewares/errorHandler";
 
@@ -20,6 +20,7 @@ export default class App {
     this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.set("view engine", "ejs");
   }
 
   protected routes(): void {

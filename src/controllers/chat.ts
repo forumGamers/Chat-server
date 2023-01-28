@@ -25,4 +25,8 @@ export default class Controller {
       next(err);
     }
   }
+
+  public static async renderChat(req: Request, res: Response): Promise<void> {
+    res.render("chat");
+  }
 }
