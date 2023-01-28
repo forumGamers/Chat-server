@@ -3,7 +3,7 @@ import Chat from "../models/chat";
 const chat = new Chat();
 
 export default class Controller {
-  static async postChat(
+  public static async postChat(
     req: Request,
     res: Response,
     next: NextFunction
@@ -24,5 +24,9 @@ export default class Controller {
     } catch (err) {
       next(err);
     }
+  }
+
+  public static async renderChat(req: Request, res: Response): Promise<void> {
+    res.render("chat");
   }
 }
