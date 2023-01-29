@@ -1,0 +1,62 @@
+<html lang="en">
+  <%- include('partials/headers',{title:'Chat'}) %>
+  <body>
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3 col-lg-3 col-sm-3"></div>
+          <div class="col-md-9 col-lg-9 col-sm-9">
+            <%- include('partials/nav',{username:"Forum Gamers"}) %> <%-
+            include('partials/chat-template') %>
+          </div>
+        </div>
+      </div>
+    </section>
+    <%- include('partials/bootstrap-script') %>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const message = document.getElementById("message");
+      const send = document.getElementById("send-message");
+      const messageList = document.getElementById("message-list");
+
+      send.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (message.value) {
+          const data = {
+            id: socket.id,
+            message: message.value,
+          };
+          socket.emit("message", data);
+          let chatList = document.createElement("p");
+          chatList.style.fontSize = "large";
+          chatList.style.height = "auto";
+          chatList.style.width = "auto";
+          chatList.style.padding = "5px";
+          chatList.style.margin = "5px";
+          chatList.style.backgroundColor = "white";
+          chatList.style.overflowY = "scroll";
+          chatList.style.borderRadius = "10px";
+          chatList.textContent = message.value;
+          messageList.appendChild(chatList);
+          message.value = "";
+        }
+      });
+
+      socket.on("message", (id, message) => {
+        let broadcast = document.createElement("p");
+        broadcast.style.fontSize = "large";
+        broadcast.style.textAlign = "right";
+        broadcast.style.height = "auto";
+        broadcast.style.width = "auto";
+        broadcast.style.padding = "5px";
+        broadcast.style.margin = "5px";
+        broadcast.style.backgroundColor = "white";
+        broadcast.style.overflowY = "scroll";
+        broadcast.style.borderRadius = "10px";
+        broadcast.textContent = `${message} - ${id}`;
+        messageList.appendChild(broadcast);
+      });
+    </script>
+  </body>
+</html>
