@@ -27,6 +27,7 @@ export default class Controller {
   }
 
   public static async renderChat(req: Request, res: Response): Promise<void> {
-    res.render("chat");
+    const { user } = req.headers;
+    res.render("chat", { user });
   }
 }

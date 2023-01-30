@@ -39,11 +39,13 @@ export default class Chat extends MongooseService {
 
   public Chat = typedModel("Chat", this.ChatSchema);
 
+  protected getChat(data: ChatSchema) {
+    return new this.Chat(data);
+  }
+
   public async createChat(data: ChatSchema): Promise<any> {
     try {
-      const chat = new this.Chat(data);
-
-      return await chat.save();
+      return this.getChat(data).save();
     } catch (err) {
       console.log(err);
       return err;
@@ -52,7 +54,7 @@ export default class Chat extends MongooseService {
 
   public async getData(): Promise<any> {
     try {
-      return await this.Chat.find();
+      return await this.Chat.aggregate([]);
     } catch (err) {
       return err;
     }
