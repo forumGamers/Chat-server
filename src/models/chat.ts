@@ -1,7 +1,7 @@
 import { createSchema, Type, typedModel } from "ts-mongoose";
 import MongooseService from "../config/mongoose";
 import { ChatSchema } from "../interfaces/schema";
-import { encrypt } from "../helpers/crypto";
+import Encyption from "../helpers/crypto";
 import Room from "./room";
 const roomSchema = new Room().RoomSchema;
 
@@ -32,7 +32,7 @@ export default class Chat extends MongooseService {
       if (!this.isModified("message")) {
         return next();
       }
-      this.set("message", encrypt(this.get("message")));
+      this.set("message", Encyption.encrypt(this.get("message")));
       next();
     });
   }

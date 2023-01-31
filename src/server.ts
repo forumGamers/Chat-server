@@ -4,17 +4,26 @@ const app = new App().app;
 
 import http from "http";
 
-const server = http.createServer(app);
-
 import { Server } from "socket.io";
 
-const io = new Server(server);
+class Http {
+  public server: http.Server;
+  public io: Server;
 
-io.on("connection", (socket) => {
-  socket.on("message", (data) => {
-    const { id, message } = data;
-    socket.broadcast.emit("message", id, message);
-  });
-});
+  constructor() {
+    this.server = http.createServer(app);
+    this.io = new Server(this.server);
+    this.socket();
+  }
 
-export default server;
+  private socket(): void {
+    this.io.on("connection", (socket) => {
+      socket.on("message", (data) => {
+        const { id, message } = data;
+        socket.broadcast.emit("message", id, message);
+      });
+    });
+  }
+}
+
+export default new Http().server;
