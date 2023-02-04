@@ -3,8 +3,7 @@ import { chatModel } from "../models";
 
 export default class Controller {
   public static async renderChat(req: Request, res: Response): Promise<void> {
-    const { user } = req.headers;
-    res.render("chat", { user });
+    res.render("chat");
   }
 
   public static async postChat(
