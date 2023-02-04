@@ -11,7 +11,22 @@ export default class Controller {
       const { type, users } = req.body;
 
       await roomModel.create({ type, users });
+
       res.status(201).json({ message: "Success create" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async getRoomChatList(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const data = await roomModel.find();
+
+      res.status(200).json(data);
     } catch (err) {
       next(err);
     }

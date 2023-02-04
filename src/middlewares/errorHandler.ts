@@ -8,5 +8,10 @@ export const errorHandler: ErrorRequestHandler = (
   let status: number = 500;
   let message: string = "Internal Server Error";
 
+  if (err._message === "Room validation failed") {
+    status = 400;
+    message = err._message;
+  }
+
   res.status(status).json({ message });
 };
