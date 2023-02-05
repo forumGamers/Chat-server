@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { roomModel } from "../models";
+import roomValidator from "../validator/room";
 
 export default class Controller {
   public static async createPrivateRoomChat(
@@ -9,6 +10,13 @@ export default class Controller {
   ): Promise<void> {
     try {
       const { type, users } = req.body;
+
+      if (users.length !== 2)
+        throw { name: "invalid data", msg: "user must be 2" };
+
+      const check = await roomValidator.checkPrivateChatRoom(users);
+
+      if (check.status === false) throw { name: "Data exists" };
 
       await roomModel.create({ type, users });
 
