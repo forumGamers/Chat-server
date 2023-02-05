@@ -29,4 +29,31 @@ export default class Controller {
       next(err);
     }
   }
+
+  public static async getGroupChatList(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+
+      const data = await roomModel.aggregate([
+        {
+          $match: {
+            users: {
+              $in: [Number(id)],
+            },
+            type: "Group",
+          },
+        },
+      ]);
+
+      if (data.length < 1) throw { name: "Data not found" };
+
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

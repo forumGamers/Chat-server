@@ -40,6 +40,7 @@ export default class Controller {
             users: {
               $in: [Number(id)],
             },
+            type: "Private",
           },
         },
       ]);
