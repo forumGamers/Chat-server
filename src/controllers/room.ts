@@ -51,4 +51,29 @@ export default class Controller {
       next(err);
     }
   }
+
+  public static async deletePrivateChatRoom(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+      const { userId } = req.params;
+
+      const data =
+        (await roomModel.deleteOne({
+          users: { $all: [Number(id), Number(userId)] },
+        })) ||
+        (await roomModel.deleteOne({
+          users: { $all: [Number(userId), Number(id)] },
+        }));
+
+      if (data === null) throw { name: "Data not found" };
+
+      res.status(200).json({ message: "Success delete" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }

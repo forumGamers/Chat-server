@@ -5,7 +5,8 @@ class RoomRoutes extends BaseRoutes {
   routes(): void {
     this.router
       .post("/", Controller.createPrivateRoomChat)
-      .get("/", Controller.getRoomChatList);
+      .get("/", Controller.getRoomChatList)
+      .delete("/:userId", Controller.deletePrivateChatRoom);
   }
 }
 
