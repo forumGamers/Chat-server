@@ -16,7 +16,7 @@ export const errorHandler: ErrorRequestHandler = (
       status = 400;
       message = err._message;
     }
-  } else if (err.name) {
+  } else if (err.name === "invalid data") {
     status = 400;
     message = err.msg;
   } else if (err.name === "Data exists") {

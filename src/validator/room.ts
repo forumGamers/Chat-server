@@ -11,7 +11,7 @@ export default class roomValidator {
         (await roomModel.find({ users: [a, b] })) ||
         (await roomModel.find({ users: [b, a] }));
 
-      if (data) throw { message: "Exists" };
+      if (data.length > 0) throw { message: "Exists" };
 
       return {
         status: true,
@@ -19,9 +19,9 @@ export default class roomValidator {
       };
     } catch (err:any) {
       return {
-        status : false,
-        message: err.message || err
-      }
+        status: false,
+        message: err.message || err,
+      };
     }
   }
 }
