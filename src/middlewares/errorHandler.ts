@@ -22,6 +22,9 @@ export const errorHandler: ErrorRequestHandler = (
   } else if (err.name === "Data exists") {
     status = 409;
     message = "Conflict";
+  } else if (err.name === "Data not found") {
+    status = 404;
+    message = err.name;
   }
 
   res.status(status).json({ message });
