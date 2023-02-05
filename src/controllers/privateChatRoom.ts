@@ -9,7 +9,7 @@ export default class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { type, users } = req.body;
+      const { users } = req.body;
 
       if (users.length !== 2)
         throw { name: "invalid data", msg: "user must be 2" };
@@ -18,7 +18,7 @@ export default class Controller {
 
       if (check.status === false) throw { name: "Data exists" };
 
-      await roomModel.create({ type, users });
+      await roomModel.create({ type: "Private", users });
 
       res.status(201).json({ message: "Success create" });
     } catch (err) {
