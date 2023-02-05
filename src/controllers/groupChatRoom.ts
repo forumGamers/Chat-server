@@ -8,7 +8,7 @@ export default class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { users, description } = req.body;
+      const { users, description, name, image } = req.body;
 
       if (users.length < 3)
         throw {
@@ -16,7 +16,13 @@ export default class Controller {
           msg: "to make group chat,users minimum are 3",
         };
 
-      await roomModel.create({ type: "Group", users, description });
+      await roomModel.create({
+        type: "Group",
+        users,
+        description,
+        name,
+        image,
+      });
 
       res.status(201).json({ message: "success create group chat" });
     } catch (err) {

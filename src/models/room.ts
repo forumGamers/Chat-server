@@ -7,6 +7,8 @@ export default class Room extends MongooseService {
       type: Type.string({ required: true, enum: ["Private", "Group"] }),
       users: Type.array({ required: true }).of(Type.number({ required: true })),
       description: Type.string(),
+      image: Type.string(),
+      name: Type.string(),
     },
     {
       timestamps: true,
