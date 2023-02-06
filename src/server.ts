@@ -4,17 +4,28 @@ const app = new App().app;
 
 import http from "http";
 
-const server = http.createServer(app);
-
 import { Server } from "socket.io";
 
-const io = new Server(server);
+class Http {
+  private server: http.Server;
+  private io: Server;
 
-io.on("connection", (socket) => {
-  socket.on("message", (data) => {
-    const { id, message } = data;
-    socket.broadcast.emit("message", id, message);
-  });
-});
+  constructor() {
+    this.server = http.createServer(app);
+    this.io = new Server(this.server);
+  }
 
-export default server;
+  public async runApp(port: number | string): Promise<void> {
+    this.io.on("connection", (socket) => {
+      socket.on("message", (data) => {
+        const { id, message } = data;
+        socket.broadcast.emit("message", id, message);
+      });
+    });
+    this.server.listen(port, () =>
+      console.log(`app listening on port ${port}`)
+    );
+  }
+}
+
+export default new Http();
