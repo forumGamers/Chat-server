@@ -1,8 +1,7 @@
 import { createSchema, Type, typedModel } from "ts-mongoose";
 import MongooseService from "../config/mongoose";
 import Encyption from "../helpers/crypto";
-import Room from "./room";
-const roomSchema = new Room().RoomSchema;
+import { roomSchema } from ".";
 
 export default class Chat extends MongooseService {
   constructor() {

@@ -1,10 +1,24 @@
 import { Request, Response, NextFunction } from "express";
-import Chat from "../models/chat";
-const chat = new Chat().Chat;
+import { chatModel } from "../models";
 
 export default class Controller {
   public static async renderChat(req: Request, res: Response): Promise<void> {
-    const { user } = req.headers;
-    res.render("chat", { user });
+    res.render("chat");
+  }
+
+  public static async postChat(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { SenderId, message, image, RoomId } = req.body;
+
+      await chatModel.create({ SenderId, message, image, RoomId });
+
+      res.status(201).json({ message: "success create chat" });
+    } catch (err) {
+      next(err);
+    }
   }
 }

@@ -1,18 +1,14 @@
-import server from "../server";
+import Http from "../server";
 
 import MongooseService from "../config/mongoose";
 
-MongooseService.connect()
-  .then((connection) =>
-    connection.once("open", () => console.log("connection success"))
-  )
-  .then(() => {
-    const port = process.env.PORT || 4200;
-    server.listen(port, () => console.log(`app listening on port ${port}`));
-  })
-  .catch((connection) =>
-    connection.on("error", (err: any) => {
-      console.log(`connection error with error : ${err}`);
-      process.exit(-1);
-    })
-  );
+const start = async () => {
+  try {
+    await MongooseService.connect();
+    await Http.runApp(process.env.PORT || 4200);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+start();

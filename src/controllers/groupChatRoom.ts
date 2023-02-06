@@ -1,0 +1,59 @@
+import { Request, Response, NextFunction } from "express";
+import { roomModel } from "../models";
+
+export default class Controller {
+  public static async createGroupRoomChat(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { users, description, name, image } = req.body;
+
+      if (users.length < 3)
+        throw {
+          name: "invalid data",
+          msg: "to make group chat,users minimum are 3",
+        };
+
+      await roomModel.create({
+        type: "Group",
+        users,
+        description,
+        name,
+        image,
+      });
+
+      res.status(201).json({ message: "success create group chat" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async getGroupChatList(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+
+      const data = await roomModel.aggregate([
+        {
+          $match: {
+            users: {
+              $in: [Number(id)],
+            },
+            type: "Group",
+          },
+        },
+      ]);
+
+      if (data.length < 1) throw { name: "Data not found" };
+
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
+}
