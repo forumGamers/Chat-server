@@ -8,7 +8,16 @@ export default class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
+      const { id } = req.headers;
       const { users, description, name, image } = req.body;
+
+      let userArr: number[] = [Number(id)];
+      let roleArr: string[] = ["Admin"];
+
+      for (let i = 0; i < users.length; i++) {
+        userArr.push(Number(users[i]));
+        roleArr.push("Member");
+      }
 
       if (users.length < 3)
         throw {
@@ -18,10 +27,12 @@ export default class Controller {
 
       await roomModel.create({
         type: "Group",
-        users,
+        users: userArr,
         description,
         name,
         image,
+        role: roleArr,
+        createdBy: Number(id),
       });
 
       res.status(201).json({ message: "success create group chat" });

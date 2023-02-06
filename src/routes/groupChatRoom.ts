@@ -3,7 +3,9 @@ import BaseRoutes from "./base";
 
 class GroupChatRoutes extends BaseRoutes {
   routes(): void {
-    this.router.post("/", Controller.createGroupRoomChat);
+    this.router
+      .post("/", Controller.createGroupRoomChat)
+      .get("/", Controller.getGroupChatList);
   }
 }
 

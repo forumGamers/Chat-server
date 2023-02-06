@@ -27,7 +27,7 @@ export default class Chat extends MongooseService {
 
   public pre(): void {
     this.ChatSchema.pre("save", function (next) {
-      if (!this.isModified("message")) {
+      if (this.isModified("message")) {
         return next();
       }
       this.set("message", Encyption.encrypt(this.get("message")));
