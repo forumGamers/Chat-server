@@ -11,6 +11,12 @@ export default class Controller {
       const { id } = req.headers;
       const { users, description, name, image } = req.body;
 
+      if (Array.isArray(users) && users.length < 2)
+        throw {
+          name: "invalid data",
+          msg: "to make group chat,users minimum are 3",
+        };
+
       let userArr: number[] = [Number(id)];
       let roleArr: string[] = ["Admin"];
 
@@ -18,12 +24,6 @@ export default class Controller {
         userArr.push(Number(users[i]));
         roleArr.push("Member");
       }
-
-      if (users.length < 3)
-        throw {
-          name: "invalid data",
-          msg: "to make group chat,users minimum are 3",
-        };
 
       await roomModel.create({
         type: "Group",
