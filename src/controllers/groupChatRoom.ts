@@ -100,7 +100,43 @@ export default class Controller {
       } else {
         throw { name: "Forbidden" };
       }
-      res.status(200).json({ message: "success" });
+      res.status(201).json({ message: "Success" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async removeAdmin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { RoomId, userId } = req.params;
+
+      const { id } = req.headers;
+
+      const user = Number(userId);
+
+      const data = await roomModel.findById(RoomId);
+
+      if (!data) throw { name: "Data not found" };
+
+      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+
+      if (
+        (data.role && data?.role[isAdmin] === "Admin") ||
+        (data.role && data.createdBy === Number(id))
+      ) {
+        const index: number = data.users.findIndex((el) => el === user);
+
+        if (data.users[index]) data.role[index] = "Member";
+
+        await data.save();
+      } else {
+        throw { name: "Forbidden" };
+      }
+      res.status(201).json({ message: "Success" });
     } catch (err) {
       next(err);
     }
