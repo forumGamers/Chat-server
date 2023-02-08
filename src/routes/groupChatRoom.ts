@@ -5,7 +5,8 @@ class GroupChatRoutes extends BaseRoutes {
   routes(): void {
     this.router
       .post("/", Controller.createGroupRoomChat)
-      .get("/", Controller.getGroupChatList);
+      .get("/", Controller.getGroupChatList)
+      .post("/admin/:RoomId/:userId", Controller.changeAdmin);
   }
 }
 
