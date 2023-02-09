@@ -159,11 +159,11 @@ export default class Controller {
       const isAdmin: number = data.users.findIndex((el) => el === Number(id));
 
       if (data?.role) {
-        if (data?.role[isAdmin] === "Admin" || data?.createdBy === Number(id)) {
-          const index: number = data.users.findIndex(
-            (el) => el === Number(userId)
-          );
-
+        let index: number = data.users.findIndex((el) => el === Number(userId));
+        if (
+          (data?.role[isAdmin] === "Admin" && data?.role[index] !== "Admin") ||
+          data.createdBy === Number(id)
+        ) {
           await roomModel.updateOne(
             { _id: Types.ObjectId(RoomId) },
             { $pull: { users: data.users[index] } }
@@ -172,6 +172,38 @@ export default class Controller {
           throw { name: "Forbidden" };
         }
       }
+      res.status(201).json({ message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async addMember(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+      const { RoomId, userId: users } = req.params;
+
+      const data = await roomModel.findById(RoomId);
+
+      if (!data) throw { name: "Data not found" };
+
+      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+
+      if (data?.role) {
+        if (data.role[isAdmin] === "Admin" || data.createdBy === Number(id)) {
+          await roomModel.updateOne(
+            { _id: Types.ObjectId(RoomId) },
+            { $push: { users } }
+          );
+        } else {
+          throw { name: "Forbidden" };
+        }
+      }
+      //if ny di buat validator aja
       res.status(201).json({ message: "success" });
     } catch (err) {
       next(err);
