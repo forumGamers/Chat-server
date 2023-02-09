@@ -93,10 +93,10 @@ export default class Controller {
       ) {
         const index: number = data.users.findIndex((el) => el === user);
 
-        data.role[index] = "Admin";
-
-        await data.save();
-        //bug data yang di local sudah berubah tapi di database tidak berubah
+        await roomModel.updateOne(
+          { _id: Types.ObjectId(RoomId) },
+          { $set: { [`role.${index}`]: "Admin" } }
+        );
       } else {
         throw { name: "Forbidden" };
       }
@@ -130,9 +130,10 @@ export default class Controller {
       ) {
         const index: number = data.users.findIndex((el) => el === user);
 
-        if (data.users[index]) data.role[index] = "Member";
-
-        await data.save();
+        await roomModel.updateOne(
+          { _id: Types.ObjectId(RoomId) },
+          { $set: { [`role.${index}`]: "Member" } }
+        );
       } else {
         throw { name: "Forbidden" };
       }
