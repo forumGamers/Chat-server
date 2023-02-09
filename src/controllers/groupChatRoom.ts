@@ -79,8 +79,6 @@ export default class Controller {
 
       const { RoomId, userId } = req.params;
 
-      const user = Number(userId);
-
       const data = await roomModel.findById(RoomId);
 
       if (!data) throw { name: "Data not found" };
@@ -91,7 +89,9 @@ export default class Controller {
         (data.role && data?.role[isAdmin] === "Admin") ||
         (data.role && data.createdBy === Number(id))
       ) {
-        const index: number = data.users.findIndex((el) => el === user);
+        const index: number = data.users.findIndex(
+          (el) => el === Number(userId)
+        );
 
         await roomModel.updateOne(
           { _id: Types.ObjectId(RoomId) },
@@ -116,8 +116,6 @@ export default class Controller {
 
       const { id } = req.headers;
 
-      const user = Number(userId);
-
       const data = await roomModel.findById(RoomId);
 
       if (!data) throw { name: "Data not found" };
@@ -128,7 +126,9 @@ export default class Controller {
         (data.role && data?.role[isAdmin] === "Admin") ||
         (data.role && data.createdBy === Number(id))
       ) {
-        const index: number = data.users.findIndex((el) => el === user);
+        const index: number = data.users.findIndex(
+          (el) => el === Number(userId)
+        );
 
         await roomModel.updateOne(
           { _id: Types.ObjectId(RoomId) },
@@ -138,6 +138,41 @@ export default class Controller {
         throw { name: "Forbidden" };
       }
       res.status(201).json({ message: "Success" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async kickMember(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+      const { RoomId, userId } = req.params;
+
+      const data = await roomModel.findById(RoomId);
+
+      if (!data) throw { name: "Data not found" };
+
+      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+
+      if (data?.role) {
+        if (data?.role[isAdmin] === "Admin" || data?.createdBy === Number(id)) {
+          const index: number = data.users.findIndex(
+            (el) => el === Number(userId)
+          );
+
+          await roomModel.updateOne(
+            { _id: Types.ObjectId(RoomId) },
+            { $pull: { users: data.users[index] } }
+          );
+        } else {
+          throw { name: "Forbidden" };
+        }
+      }
+      res.status(201).json({ message: "success" });
     } catch (err) {
       next(err);
     }
