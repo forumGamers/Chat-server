@@ -9,6 +9,7 @@ class GroupChatRoutes extends BaseRoutes {
       .patch("/admin/:RoomId/:userId", Controller.changeAdmin)
       .patch("/admin/:RoomId/:userId/remove", Controller.removeAdmin)
       .post("/:RoomId", Controller.addMember)
+      .patch("/:RoomId", Controller.updateDescription)
       .delete("/:RoomId/:userId", Controller.kickMember);
   }
 }

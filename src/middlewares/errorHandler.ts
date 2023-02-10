@@ -34,6 +34,9 @@ export const errorHandler: ErrorRequestHandler = (
   } else if (err.name === "conflict") {
     status = 409;
     message = err.name;
+  } else if (err.name === "bad request") {
+    status = 400;
+    message = err.msg;
   }
 
   res.status(status).json({ message });

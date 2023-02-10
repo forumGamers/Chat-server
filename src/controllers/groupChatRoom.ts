@@ -213,4 +213,39 @@ export default class Controller {
       next(err);
     }
   }
+
+  public static async updateDescription(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { RoomId } = req.params;
+      const { id } = req.headers;
+      const { description } = req.body;
+
+      const data = await roomModel.findById(RoomId);
+
+      if (!data) throw { name: "Data not found" };
+
+      if (data.type !== "Group")
+        throw { name: "bad request", msg: "not group chat" };
+
+      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+
+      if (data?.role) {
+        if (data.role[isAdmin] === "Admin" || data.createdBy === Number(id)) {
+          await roomModel.updateOne(
+            { _id: Types.ObjectId(RoomId) },
+            { $set: { description } }
+          );
+        } else {
+          throw { name: "Forbidden" };
+        }
+      }
+      res.status(201).json({ message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
