@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
 import { roomModel } from "../models";
+import roomValidator from "../validator/room";
 
 export default class Controller {
   public static async createGroupRoomChat(
@@ -83,22 +84,18 @@ export default class Controller {
 
       if (!data) throw { name: "Data not found" };
 
-      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+      const check = roomValidator.checkAuthorize(Number(id), data);
 
-      if (
-        (data.role && data?.role[isAdmin] === "Admin") ||
-        (data.role && data.createdBy === Number(id))
-      ) {
+      if (check.status) {
         const index: number = data.users.findIndex(
           (el) => el === Number(userId)
         );
-
         await roomModel.updateOne(
           { _id: Types.ObjectId(RoomId) },
           { $set: { [`role.${index}`]: "Admin" } }
         );
       } else {
-        throw { name: "Forbidden" };
+        throw { name: check.message };
       }
       res.status(201).json({ message: "Success" });
     } catch (err) {
@@ -120,22 +117,18 @@ export default class Controller {
 
       if (!data) throw { name: "Data not found" };
 
-      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+      const check = roomValidator.checkAuthorize(Number(id), data);
 
-      if (
-        (data.role && data?.role[isAdmin] === "Admin") ||
-        (data.role && data.createdBy === Number(id))
-      ) {
+      if (check.status) {
         const index: number = data.users.findIndex(
           (el) => el === Number(userId)
         );
-
         await roomModel.updateOne(
           { _id: Types.ObjectId(RoomId) },
           { $set: { [`role.${index}`]: "Member" } }
         );
       } else {
-        throw { name: "Forbidden" };
+        throw { name: check.message };
       }
       res.status(201).json({ message: "Success" });
     } catch (err) {
@@ -156,14 +149,13 @@ export default class Controller {
 
       if (!data) throw { name: "Data not found" };
 
-      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+      const check = roomValidator.checkAuthorize(Number(id), data);
 
-      if (data?.role) {
-        let index: number = data.users.findIndex((el) => el === Number(userId));
-        if (
-          (data?.role[isAdmin] === "Admin" && data?.role[index] !== "Admin") ||
-          data.createdBy === Number(id)
-        ) {
+      if (check.status) {
+        const index: number = data.users.findIndex(
+          (el) => el === Number(userId)
+        );
+        if (data.role && data?.role[index] !== "Admin") {
           await roomModel.updateOne(
             { _id: Types.ObjectId(RoomId) },
             { $pull: { users: data.users[index] } }
@@ -171,6 +163,8 @@ export default class Controller {
         } else {
           throw { name: "Forbidden" };
         }
+      } else {
+        throw { name: check.message };
       }
       res.status(201).json({ message: "success" });
     } catch (err) {
@@ -196,17 +190,15 @@ export default class Controller {
 
       if (check) throw { name: "conflict" };
 
-      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+      const validate = roomValidator.checkAuthorize(Number(id), data);
 
-      if (data?.role) {
-        if (data.role[isAdmin] === "Admin" || data.createdBy === Number(id)) {
-          await roomModel.updateOne(
-            { _id: Types.ObjectId(RoomId) },
-            { $push: { users, role: "Member" } }
-          );
-        } else {
-          throw { name: "Forbidden" };
-        }
+      if (validate.status) {
+        await roomModel.updateOne(
+          { _id: Types.ObjectId(RoomId) },
+          { $push: { users, role: "Member" } }
+        );
+      } else {
+        throw { name: validate.message };
       }
       res.status(201).json({ message: "success" });
     } catch (err) {
@@ -231,17 +223,15 @@ export default class Controller {
       if (data.type !== "Group")
         throw { name: "bad request", msg: "not group chat" };
 
-      const isAdmin: number = data.users.findIndex((el) => el === Number(id));
+      const check = roomValidator.checkAuthorize(Number(id), data);
 
-      if (data?.role) {
-        if (data.role[isAdmin] === "Admin" || data.createdBy === Number(id)) {
-          await roomModel.updateOne(
-            { _id: Types.ObjectId(RoomId) },
-            { $set: { description } }
-          );
-        } else {
-          throw { name: "Forbidden" };
-        }
+      if (check.status) {
+        await roomModel.updateOne(
+          { _id: Types.ObjectId(RoomId) },
+          { $set: { description } }
+        );
+      } else {
+        throw { name: check.message };
       }
       res.status(201).json({ message: "success" });
     } catch (err) {

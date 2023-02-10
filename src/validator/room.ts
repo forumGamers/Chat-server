@@ -1,5 +1,5 @@
 import { roomModel } from "../models";
-import { roomPrivateCheck } from "../interfaces/roomValidate";
+import { roomPrivateCheck, checkAuthorize } from "../interfaces/roomValidate";
 
 export default class roomValidator {
   public static async checkPrivateChatRoom(
@@ -17,10 +17,36 @@ export default class roomValidator {
         status: true,
         message: "OK",
       };
-    } catch (err:any) {
+    } catch (err : any) {
       return {
         status: false,
         message: err.message || err,
+      };
+    }
+  }
+
+  public static checkAuthorize(id: number, data: any): checkAuthorize{
+    try {
+      const isAdmin: number = data.users.findIndex((el: any) => el === id);
+
+      if (data?.role) {
+        if (data.role[isAdmin] === "Admin" || data.createdBy === id) {
+          return {
+            status: true,
+            message: "ok",
+          };
+        } else {
+          throw { name: "Forbidden" };
+        }
+      }
+      return {
+        status : true,
+        message : 'ok'
+      }
+    } catch (err : any) {
+      return {
+        status: false,
+        message: err.name,
       };
     }
   }
