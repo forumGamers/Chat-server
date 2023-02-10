@@ -185,11 +185,16 @@ export default class Controller {
   ): Promise<void> {
     try {
       const { id } = req.headers;
-      const { RoomId, userId: users } = req.params;
+      const { RoomId } = req.params;
+      const { users } = req.body;
 
       const data = await roomModel.findById(RoomId);
 
       if (!data) throw { name: "Data not found" };
+
+      const check = data.users.find((el) => el === Number(users));
+
+      if (check) throw { name: "conflict" };
 
       const isAdmin: number = data.users.findIndex((el) => el === Number(id));
 
@@ -197,13 +202,12 @@ export default class Controller {
         if (data.role[isAdmin] === "Admin" || data.createdBy === Number(id)) {
           await roomModel.updateOne(
             { _id: Types.ObjectId(RoomId) },
-            { $push: { users } }
+            { $push: { users, role: "Member" } }
           );
         } else {
           throw { name: "Forbidden" };
         }
       }
-      //if ny di buat validator aja
       res.status(201).json({ message: "success" });
     } catch (err) {
       next(err);

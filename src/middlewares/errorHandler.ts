@@ -31,6 +31,9 @@ export const errorHandler: ErrorRequestHandler = (
   } else if (err.name === "Forbidden") {
     status = 403;
     message = err.name;
+  } else if (err.name === "conflict") {
+    status = 409;
+    message = err.name;
   }
 
   res.status(status).json({ message });
