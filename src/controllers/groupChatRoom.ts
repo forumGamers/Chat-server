@@ -264,6 +264,8 @@ export default class Controller {
 
       let index: number = data.users.findIndex((el) => el === Number(id));
 
+      if (index === -1) throw { name: "Forbidden" };
+
       if (data.owner === Number(id)) {
         if (!owner)
           throw {
@@ -295,7 +297,7 @@ export default class Controller {
     }
   }
 
-  public static async getGroupData(
+  public static async getGroupDataByRoomId(
     req: Request,
     res: Response,
     next: NextFunction

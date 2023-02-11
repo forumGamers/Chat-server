@@ -30,10 +30,21 @@ export default class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { SenderId, message, image } = req.body;
+      const { id: SenderId } = req.headers;
       const { RoomId } = req.params;
+      let { message, image } = req.body;
 
-      await chatModel.create({ SenderId, message, image, RoomId });
+      if (!message && !image) {
+        throw { name: "bad request", msg: "please input message or image" };
+      } else if (!message) message = null;
+      else if (!image) image = null;
+
+      await chatModel.create({
+        SenderId,
+        message,
+        image,
+        RoomId,
+      });
 
       res.status(201).json({ message: "success create chat" });
     } catch (err) {
