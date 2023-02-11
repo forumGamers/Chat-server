@@ -30,7 +30,7 @@ export default class roomValidator {
       const isAdmin: number = data.users.findIndex((el: any) => el === id);
 
       if (data?.role) {
-        if (data.role[isAdmin] === "Admin" || data.createdBy === id) {
+        if (data.role[isAdmin] === "Admin" || data.owner === id) {
           return {
             status: true,
             message: "ok",

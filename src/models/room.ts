@@ -16,7 +16,7 @@ export default class Room extends MongooseService {
       image: Type.string({ default: null }),
       name: Type.string({ default: null }),
       role: Type.array().of(Type.string({ enum: ["Admin", "Member"] })),
-      createdBy: Type.number({ required: true }),
+      owner: Type.number({ required: true }),
     },
     {
       timestamps: true,

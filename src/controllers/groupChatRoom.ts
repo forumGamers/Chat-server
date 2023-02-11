@@ -34,7 +34,7 @@ export default class Controller {
         name,
         image,
         role: roleArr,
-        createdBy: Number(id),
+        owner: Number(id),
       });
 
       res.status(201).json({ message: "success create group chat" });
@@ -232,6 +232,53 @@ export default class Controller {
         );
       } else {
         throw { name: check.message };
+      }
+      res.status(201).json({ message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async leaveGroup(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+      const { RoomId } = req.params;
+      const { newOwner: owner } = req.body;
+
+      const data = await roomModel.findById(RoomId);
+
+      if (!data) throw { name: "Data not found" };
+
+      let index: number = data.users.findIndex((el) => el === Number(id));
+
+      if (data.owner === Number(id)) {
+        if (!owner)
+          throw {
+            name: "bad request",
+            msg: "please give owner status to other",
+          };
+
+        const check = data.users.findIndex((el) => el === Number(owner));
+
+        if (!check)
+          throw { name: "bad request", msg: "input only the group members" };
+
+        await roomModel.updateOne(
+          { _id: Types.ObjectId(RoomId) },
+          {
+            $set: { owner },
+            $pull: { users: data.users[index] },
+          }
+        );
+      } else {
+        await roomModel.updateOne(
+          { _id: Types.ObjectId(RoomId) },
+          { $pull: { users: data.users[index] } }
+        );
       }
       res.status(201).json({ message: "success" });
     } catch (err) {
