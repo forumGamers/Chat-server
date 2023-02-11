@@ -90,6 +90,9 @@ export default class Controller {
         const index: number = data.users.findIndex(
           (el) => el === Number(userId)
         );
+
+        if (index === -1) throw { name: "Forbidden" };
+
         await roomModel.updateOne(
           { _id: Types.ObjectId(RoomId) },
           { $set: { [`role.${index}`]: "Admin" } }
@@ -123,6 +126,9 @@ export default class Controller {
         const index: number = data.users.findIndex(
           (el) => el === Number(userId)
         );
+
+        if (index === -1) throw { name: "Forbidden" };
+
         await roomModel.updateOne(
           { _id: Types.ObjectId(RoomId) },
           { $set: { [`role.${index}`]: "Member" } }
@@ -155,6 +161,9 @@ export default class Controller {
         const index: number = data.users.findIndex(
           (el) => el === Number(userId)
         );
+
+        if (index === -1) throw { name: "Forbidden" };
+
         if (data.role && data?.role[index] !== "Admin") {
           await roomModel.updateOne(
             { _id: Types.ObjectId(RoomId) },
@@ -264,7 +273,7 @@ export default class Controller {
 
         const check = data.users.findIndex((el) => el === Number(owner));
 
-        if (!check)
+        if (check === -1)
           throw { name: "bad request", msg: "input only the group members" };
 
         await roomModel.updateOne(
@@ -281,6 +290,29 @@ export default class Controller {
         );
       }
       res.status(201).json({ message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async getGroupData(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+      const { RoomId } = req.params;
+
+      const data = await roomModel.findById(RoomId);
+
+      if (!data) throw { name: "Data not found" };
+
+      const exists = data.users.findIndex((el) => el === Number(id));
+
+      if (exists === -1) throw { name: "Forbidden" };
+
+      res.status(200).json({ data });
     } catch (err) {
       next(err);
     }

@@ -29,6 +29,8 @@ export default class roomValidator {
     try {
       const isAdmin: number = data.users.findIndex((el: any) => el === id);
 
+      if(isAdmin === -1) throw { name : 'Forbidden'}
+
       if (data?.role) {
         if (data.role[isAdmin] === "Admin" || data.owner === id) {
           return {
