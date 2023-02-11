@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
+import Encyption from "../helpers/crypto";
 import { roomModel } from "../models";
 import roomValidator from "../validator/room";
 
@@ -30,9 +31,9 @@ export default class Controller {
       await roomModel.create({
         type: "Group",
         users: userArr,
-        description,
-        name,
-        image,
+        description: !description ? null : Encyption.encrypt(description),
+        name: !name ? null : Encyption.encrypt(name),
+        image: !image ? null : Encyption.encrypt(image),
         role: roleArr,
         owner: Number(id),
       });

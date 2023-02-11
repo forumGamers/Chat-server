@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { chatModel } from "../models";
+import { chatModel, roomModel } from "../models";
 import { Types } from "mongoose";
+import Encyption from "../helpers/crypto";
 
 export default class Controller {
   public static async renderChat(
@@ -34,6 +35,14 @@ export default class Controller {
       const { RoomId } = req.params;
       let { message, image } = req.body;
 
+      const data = await roomModel.findById(RoomId);
+
+      if (!data) throw { name: "Data not found" };
+
+      const check = data.users.findIndex((el) => el === Number(SenderId));
+
+      if (check === -1) throw { name: "Forbidden" };
+
       if (!message && !image) {
         throw { name: "bad request", msg: "please input message or image" };
       } else if (!message) message = null;
@@ -41,8 +50,8 @@ export default class Controller {
 
       await chatModel.create({
         SenderId,
-        message,
-        image,
+        message: message === null ? null : Encyption.encrypt(message),
+        image: image === null ? null : Encyption.encrypt(image),
         RoomId,
       });
 
