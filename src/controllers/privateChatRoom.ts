@@ -9,16 +9,17 @@ export default class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { users } = req.body;
+      const { id } = req.headers;
+      const { userId } = req.params;
 
-      if (users.length !== 2)
-        throw { name: "invalid data", msg: "user must be 2" };
+      const check = await roomValidator.checkPrivateChatRoom([
+        Number(id),
+        Number(userId),
+      ]);
 
-      const check = await roomValidator.checkPrivateChatRoom(users);
+      if (check.status === false) throw { name: "Data exists" }; //nanti redirect ke data chat nya
 
-      if (check.status === false) throw { name: "Data exists" };
-
-      await roomModel.create({ type: "Private", users });
+      await roomModel.create({ type: "Private", users: [id, userId] });
 
       res.status(201).json({ message: "Success create" });
     } catch (err) {
@@ -60,15 +61,9 @@ export default class Controller {
   ): Promise<void> {
     try {
       const { id } = req.headers;
-      const { userId } = req.params;
+      const { RoomId } = req.params;
 
-      const data =
-        (await roomModel.deleteOne({
-          users: { $all: [Number(id), Number(userId)] },
-        })) ||
-        (await roomModel.deleteOne({
-          users: { $all: [Number(userId), Number(id)] },
-        }));
+      const data = await roomModel.findByIdAndDelete(RoomId);
 
       if (data === null) throw { name: "Data not found" };
 

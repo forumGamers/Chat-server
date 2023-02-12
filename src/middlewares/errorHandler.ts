@@ -25,6 +25,20 @@ export const errorHandler: ErrorRequestHandler = (
   } else if (err.name === "Data not found") {
     status = 404;
     message = err.name;
+  } else if (err.name === "failed  update") {
+    status = 501;
+    message = "Something went wrong";
+  } else if (err.name === "Forbidden") {
+    status = 403;
+    message = err.name;
+  } else if (err.name === "conflict") {
+    status = 409;
+    message = err.name;
+  } else if (err.name === "bad request") {
+    status = 400;
+    message = err.msg;
+  } else if (err.name === "system error") {
+    message = err.name;
   }
 
   res.status(status).json({ message });
