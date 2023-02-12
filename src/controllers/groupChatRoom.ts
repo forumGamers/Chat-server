@@ -168,7 +168,7 @@ export default class Controller {
         if (data.role && data?.role[index] !== "Admin") {
           await roomModel.updateOne(
             { _id: Types.ObjectId(RoomId) },
-            { $pull: { users: data.users[index] } }
+            { $pull: { users: data.users[index], role: data.role[index] } }
           );
         } else {
           throw { name: "Forbidden" };
@@ -279,11 +279,13 @@ export default class Controller {
         if (check === -1)
           throw { name: "bad request", msg: "input only the group members" };
 
+        if (!data.role) throw { name: "system error" };
+
         await roomModel.updateOne(
           { _id: Types.ObjectId(RoomId) },
           {
             $set: { owner },
-            $pull: { users: data.users[index] },
+            $pull: { users: data.users[index], role: data?.role[index] },
           }
         );
       } else {

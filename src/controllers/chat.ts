@@ -91,7 +91,15 @@ export default class Controller {
 
       if (check === -1) throw { name: "Forbidden" };
 
-      res.status(200).json(data);
+      const resp = data.map((el: any) => {
+        return {
+          ...el,
+          message: el.message !== null ? Encyption.decrypt(el.message) : null,
+          image: el.image !== null ? Encyption.decrypt(el.image) : null,
+        };
+      });
+
+      res.status(200).json(resp);
     } catch (err) {
       next(err);
     }

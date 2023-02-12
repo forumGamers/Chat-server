@@ -37,6 +37,8 @@ export const errorHandler: ErrorRequestHandler = (
   } else if (err.name === "bad request") {
     status = 400;
     message = err.msg;
+  } else if (err.name === "system error") {
+    message = err.name;
   }
 
   res.status(status).json({ message });
