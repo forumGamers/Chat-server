@@ -10,6 +10,7 @@ export default class Chat extends MongooseService {
       image: Type.string(),
       RoomId: Type.ref(Type.objectId()).to("Room", roomSchema),
       isRead: Type.boolean({ default: false }),
+      status: Type.string({ default: "Aktif", enum: ["Aktif", "Dihapus"] }),
     },
     {
       timestamps: true,

@@ -49,7 +49,7 @@ export default class Controller {
         });
       }
 
-      searchQuery.push({ RoomId: Types.ObjectId(RoomId) });
+      searchQuery.push({ RoomId: Types.ObjectId(RoomId), status: "Aktif" });
 
       Object.assign(query, { $and: searchQuery });
 
@@ -136,6 +136,31 @@ export default class Controller {
       });
 
       res.status(201).json({ message: "success create chat" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public static async deleteChat(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+      const { ChatId } = req.params;
+
+      const data = await chatModel.findById(ChatId);
+
+      if (!data) throw { name: "Data not found" };
+
+      if (data.SenderId !== Number(id)) throw { name: "Forbidden" };
+
+      data.status = "Dihapus";
+
+      await data.save();
+
+      res.status(200).json({ message: "success" });
     } catch (err) {
       next(err);
     }

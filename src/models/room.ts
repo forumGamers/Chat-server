@@ -1,6 +1,5 @@
 import { createSchema, Type, typedModel } from "ts-mongoose";
 import MongooseService from "../config/mongoose";
-import Encyption from "../helpers/crypto";
 
 export default class Room extends MongooseService {
   public RoomSchema = createSchema(
