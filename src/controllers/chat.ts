@@ -165,4 +165,30 @@ export default class Controller {
       next(err);
     }
   }
+
+  public static async updateChat(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.headers;
+      const { ChatId } = req.params;
+      const { message } = req.body;
+
+      const data = await chatModel.findById(ChatId);
+
+      if (!data) throw { name: "Data not found" };
+
+      if (data.SenderId !== Number(id)) throw { name: "Forbidden" };
+
+      data.message = Encyption.encrypt(message);
+
+      await data.save();
+
+      res.status(201).json({ message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }

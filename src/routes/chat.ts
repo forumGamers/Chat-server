@@ -6,6 +6,7 @@ class ChatRouter extends BaseRoutes {
     this.router
       .get("/:RoomId/", Controller.getChat)
       .post("/:RoomId", Controller.postChat)
+      .patch("/:ChatId", Controller.updateChat)
       .delete("/:ChatId", Controller.deleteChat);
   }
 }
