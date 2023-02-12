@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node build/bin/www.js",
     "build": "tsc",
-    "dev": "nodemon build/bin/www.js"
+    "dev": "nodemon build/bin/www.js",
+    "serve": "tsc && node build/bin/www.js"
   },
   "repository": {
     "type": "git",
