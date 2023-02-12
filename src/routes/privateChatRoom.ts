@@ -4,9 +4,9 @@ import Controller from "../controllers/privateChatRoom";
 class PrivateChatRoomRoutes extends BaseRoutes {
   routes(): void {
     this.router
-      .post("/", Controller.createPrivateRoomChat)
+      .post("/:userId", Controller.createPrivateRoomChat)
       .get("/", Controller.getRoomChatList)
-      .delete("/:userId", Controller.deletePrivateChatRoom);
+      .delete("/:RoomId", Controller.deletePrivateChatRoom);
   }
 }
 
