@@ -1,6 +1,7 @@
 import { createSchema, Type, typedModel } from "ts-mongoose";
 import MongooseService from "../config/mongoose";
 import { roomSchema } from ".";
+import * as Mongoose from "mongoose";
 
 export default class Chat extends MongooseService {
   public ChatSchema = createSchema(
@@ -19,5 +20,23 @@ export default class Chat extends MongooseService {
     }
   );
 
+  public ensureIndexes(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const indexObj: Mongoose.IndexOptions = {
+        name: "chat_idx",
+      };
+      this.ChatSchema.index({ SenderId: 1, isRead: 1, RoomId: 1 }, indexObj);
+      this.Chat.ensureIndexes((err: Error) => {
+        if (err) reject(err);
+        resolve();
+      });
+    });
+  }
+
   public Chat = typedModel("Chat", this.ChatSchema);
+
+  constructor() {
+    super();
+    this.ensureIndexes();
+  }
 }

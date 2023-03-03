@@ -1,5 +1,6 @@
 import { createSchema, Type, typedModel } from "ts-mongoose";
 import MongooseService from "../config/mongoose";
+import * as Mongoose from "mongoose";
 
 export default class Room extends MongooseService {
   public RoomSchema = createSchema(
@@ -19,5 +20,23 @@ export default class Room extends MongooseService {
     }
   );
 
+  public ensureIndexes(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const indexObj: Mongoose.IndexOptions = {
+        name: "room_idx",
+      };
+      this.RoomSchema.index({ users: 1, type: 1 }, indexObj);
+      this.Room.ensureIndexes((err: Error) => {
+        if (err) reject(err);
+        resolve();
+      });
+    });
+  }
+
   public Room = typedModel("Room", this.RoomSchema);
+
+  constructor() {
+    super();
+    this.ensureIndexes();
+  }
 }
